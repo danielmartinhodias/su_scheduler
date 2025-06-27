@@ -1,6 +1,5 @@
 streamlit
 datetime
 caldav
-re
 pandas
 convertapi
