@@ -3,3 +3,4 @@ datetime
 caldav
 pandas
 convertapi
+openpyxl
