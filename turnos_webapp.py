@@ -167,11 +167,14 @@ if uploaded_file is not None:
           for start, end in events
       ]
 
+      ics_content = [
+        "BEGIN:VCALENDAR",
+        "VERSION:2.0",
+        "PRODID:-//MyApp//Event Calendar//EN"
+      ]
+
       for start, end in date_ranges:
-        event_text = f"""BEGIN:VCALENDAR
-VERSION:2.0
-PRODID:-//Your Script//EN
-BEGIN:VEVENT
+        ics_content.append(f"""BEGIN:VEVENT
 UID:{start.timestamp()}@example.com
 DTSTAMP:{datetime.datetime.utcnow().strftime('%Y%m%dT%H%M%SZ')}
 DTSTART:{start.strftime('%Y%m%dT%H%M%S')}
@@ -179,10 +182,14 @@ DTEND:{end.strftime('%Y%m%dT%H%M%S')}
 SUMMARY:SU-CHUSJ (auto)
 DESCRIPTION:Este vai ser um dia de trabalho, mas vai correr bem :)
 END:VEVENT
-END:VCALENDAR
-"""
-          
-        calendar.add_event(event_text)
-        # st.write(f"Adicionado turno de dia {str(start)[8:-8]} ao calendário")
-        
-      status.success ("Turnos agendados no calendário :)")
+""")
+      ics_content.append("END:VCALENDAR")
+      
+      ics_content="\n".join(ics_content)
+
+      st.download_button(
+          label="📅 Download Calendar (.ics)",
+          data=ics_content,
+          file_name="turnos.ics",
+          mime="text/calendar"
+      )
