@@ -62,6 +62,7 @@ if uploaded_file is not None:
             new_dict[key]=value
 
         print ("new_dict")
+        print (new_dict)
         # print (new_dict)
 
       df_codigos = pd.read_excel(f'{save_path[:-3]}xlsx', sheet_name='Table 2', header=None)
@@ -70,9 +71,25 @@ if uploaded_file is not None:
 
 
 
-      pattern = r'(\b[A-Z0-9]+)\s+[^\(]*\((\d{2}:\d{2} - \d{2}:\d{2})\)'
+      #pattern = r'(\b[A-Z0-9]+)\s+[^\(]*\((\d{2}:\d{2} - \d{2}:\d{2})\)'
+      # Normalize spacing and remove line breaks
+      all_text = re.sub(r'\s+', ' ', all_text)
+
+      # More flexible regex
+      pattern = r'\b([A-Z0-9]{2,5})\b[^()]*\(\s*(\d{2}:\d{2})\s*-\s*(\d{2}:\d{2})\s*\)'
+
+
       matches = re.findall(pattern, all_text)
-      dict_result = dict(matches)
+      # dict_result = dict(matches)
+      excluded_codes = {'LF', '5000', 'PS'}  # normalize to uppercase for matching
+      dict_result = {
+          code: f"{start} - {end}"
+          for code, start, end in matches
+          if code.upper() not in excluded_codes and not code.isdigit()
+      }
+      
+      print ("dict_result")
+      print (dict_result)
       # print(dict_result)
 
       last_dict={k: dict_result[v] for k,v in new_dict.items()}
